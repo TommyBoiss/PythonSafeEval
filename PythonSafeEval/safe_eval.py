@@ -80,7 +80,7 @@ class SafeEval:
         except FileNotFoundError:
             pass
 
-    def eval(self, code=None, time_limit=0):
+    def eval(self, code=None, time_limit=0, memory="500m"):
         if code is None:
             return
         
@@ -90,7 +90,7 @@ class SafeEval:
             f.write(code)
         
         # execute code
-        return self.__execute_file_in_volume(volume_filename, time_limit)
+        return self.__execute_file_in_volume(volume_filename, time_limit,memory)
 
     def execute_file(self, filename=None, time_limit=0):
         if filename is None:
@@ -101,10 +101,10 @@ class SafeEval:
         shutil.copyfile(filename, self.__session_path / volume_filename)
 
         # execute code
-        return self.__execute_file_in_volume(volume_filename, time_limit)
+        return self.__execute_file_in_volume(volume_filename, time_limit, memory)
         
-    def __execute_file_in_volume(self, volume_filename, time_limit):
-        command = "docker exec {session_id} nsjail --user 99999 --group 99999 --disable_proc --chroot / --really_quiet --time_limit {time_limit} /usr/bin/python3 /volume/{volume_filename}".format(session_id=self.__session_id, time_limit=time_limit, volume_filename=volume_filename)
+    def __execute_file_in_volume(self, volume_filename, time_limit, memory):
+        command = "docker exec {session_id} nsjail --user 99999 --group 99999 --disable_proc --chroot / --really_quiet --memory {memory} --time_limit {time_limit} /usr/bin/python3 /volume/{volume_filename}".format(session_id=self.__session_id, time_limit=time_limit, volume_filename=volume_filename)
         return subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def __random_word(self, length=12):
