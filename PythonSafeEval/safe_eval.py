@@ -52,7 +52,7 @@ class SafeEval:
             f.write(Dockerfile)
 
         # build docker image
-        result = subprocess.run("docker build -t {session_id}_image /.nsjail".format(session_id=self.__session_id), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, cwd=self.__session_path)
+        result = subprocess.run("docker build -t {session_id}_image .nsjail".format(session_id=self.__session_id), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, cwd=self.__session_path)
         if result.returncode != 0:
             raise RuntimeError("Failed to build docker images: " + result.stderr.decode("utf-8"))
 
